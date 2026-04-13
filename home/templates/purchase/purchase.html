@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid py-4 ">
+
+  <div class="card shadow-sm border-0">
+    <!-- HEADER -->
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">📦 Xarid bo'limi</h5>
+      <a href="{% url 'add_purchase_view' %}" class="btn btn-info">
+        + Xarid qo'shish</a>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Telefon</th>
+            <th>Soni</th>
+            <th>Olish narxi</th>
+            <th>Olingan vaqti</th>
+            <th>Izoh</th>
+            <th class="text-end">Amallar</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for purchase in purchases %}
+
+          <tr class="clickable-row" data-url="{% url 'open_purchase_details_view' pk=purchase.pk %}"
+            style="cursor:pointer">
+            <td>
+              <i class="fa-solid fa-mobile-screen-button me-2 text-secondary"></i>
+              <strong>{{ purchase.phone }}</strong>
+            </td>
+
+            <td>
+              <span class="badge bg-primary px-3 py-2">
+                {{ purchase.quantity }}
+              </span>
+            </td>
+
+            <td>
+              <span class="fw-semibold text-success">
+                {{ purchase.cost_price }} $
+              </span>
+            </td>
+
+            <td>
+              <span class="text-muted small">
+                {{ purchase.created_at|date:"Y-m-d H:i" }}
+              </span>
+            </td>
+
+            <td>{{ purchase.description|truncatewords:5 }}</td>
+
+            <td class="text-end">
+              <ul style="
+                  width: 100%;
+                  height: 100%;
+                  display: flex;
+                  list-style: none;
+                  gap: 10px;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                <li>
+                  <a class="btn btn-warning " title="delete" onclick="return confirm('Ochirasizmi');"
+                    href="{% url 'delete_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
+                </li>
+                <li>
+                  <a class="btn btn-danger text-danger" title="delete" onclick="return confirm('Ochirasizmi');"
+                    href="{% url 'delete_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-trash"
+                      style="color: rgb(255, 255, 255)"></i></a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => {
+      window.location.href = row.dataset.url;
+    });
+  });
+</script>
+{% endblock content %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid py-4 ">
+
+    <div class="card shadow-sm border-0">
+        <!-- HEADER -->
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">📦 Sotuv bo‘limi</h5>
+            <a href="{% url 'add_sale_view' %}" class="btn btn-info">
+                + Sotuv qo'shish</a>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Telefon</th>
+                        <th>Sotildi</th>
+                        <th>Mavjud</th>
+                        <th>Sotilgan narxi</th>
+                        <th>To'lov usuli</th>
+                        <th>Sotilgan sana</th>
+                        <th>Izoh</th>
+                        <th class="text-end">Amallar</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for sale in sales %}
+
+                    <tr class="clickable-row" style="cursor:pointer" data-url="{% url 'open_sale_details_view' pk=sale.pk %}">
+                        <td>
+                            <i class="fa-solid fa-mobile-screen-button me-2 text-secondary"></i>
+                            <strong>{{ sale.phone }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-primary px-3 py-2">
+                                {{ sale.quantity }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if sale.phone.quantity == 0 %}
+                            <span class="badge bg-danger px-3 py-2">
+                                Tugadi
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success px-3 py-2">
+                                {{ sale.phone.quantity }}
+                            </span>
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <span class="fw-semibold text-success">
+                                {{ sale.price_sold }} $
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-semibold text-primary">
+                                {{ sale.payment_method }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="text-muted small">
+                                {{ sale.created_at|date:"Y-m-d H:i" }}
+                            </span>
+                        </td>
+
+                        <td>{{ sale.description|truncatewords:5 }}</td>
+
+                        <td class="text-end">
+                            <ul style="
+                  width: 100%;
+                  height: 100%;
+                  display: flex;
+                  list-style: none;
+                  gap: 10px;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                                <li>
+                                    <a class="btn btn-warning " title="delete" onclick="return confirm('Ochirasizmi');"
+                                        href="{% url 'delete_sale_view' pk=sale.pk %}"><i
+                                            class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
+                                </li>
+                                <li>
+                                    <a class="btn btn-danger text-danger" title="delete"
+                                        onclick="return confirm('Ochirasizmi');"
+                                        href="{% url 'delete_sale_view' pk=sale.pk %}"><i class="fa-solid fa-trash"
+                                            style="color: rgb(255, 255, 255)"></i></a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll(".clickable-row").forEach(row => {
+        row.addEventListener("click", () => {
+            window.location.href = row.dataset.url;
+        });
+    });
+</script>
+{% endblock content %}

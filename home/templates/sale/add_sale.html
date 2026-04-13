@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'sale_view' %}" class="btn btn-outline-secondary mb-4">
+        ← Orqaga
+    </a>
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card border-0 shadow-lg rounded-4">
+
+                <!-- HEADER -->
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="fw-bold mb-0">➕ Yangi Sotuv</h4>
+                    <small class="text-muted">Telefon tanlang va ma’lumot kiriting</small>
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body p-4">
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- STOCK INFO -->
+                        {% if text %}
+                        <div class="alert alert-danger"> {{ text }} </div>
+                        {% else %}
+                        <div class="alert alert-info d-flex justify-content-between align-items-center py-2">
+                            <span>📦 Mavjud soni</span>
+                            <b id="phoneQty" class="fs-5">0</b>
+                        </div>
+                        {% endif %}
+
+
+                        <!-- PHONE -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">📱 Phone</label>
+                            <select id="phoneSelect" name="phone" class="form-select form-select-lg shadow-sm">
+                                {% for phone in form.fields.phone.queryset %}
+                                <option value="{{ phone.id }}" data-qty="{{ phone.quantity }}">
+                                    {{ phone.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- QUANTITY -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">🔢 Soni</label>
+                            {{ form.quantity }}
+                        </div>
+
+                        <!-- COST PRICE -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">💰 Narx</label>
+                            {{ form.cost_price }}
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">📝 Tavsif</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm mt-3">
+                            💾 Saqlash
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+    const select = document.getElementById("phoneSelect");
+    const qtyBox = document.getElementById("phoneQty");
+
+    function updateQty() {
+        const selected = select.options[select.selectedIndex];
+        qtyBox.textContent = selected.getAttribute("data-qty");
+    }
+
+    select.addEventListener("change", updateQty);
+    updateQty();
+</script>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="d-flex justify-content-between gap-2 align-items-center mb-4">
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary"> ← Orqaga </a>
+
+  <div class="d-flex gap-2">
+    <a href="{% url 'edit_phone' pk=item.pk %}" class="btn btn-warning">
+      ✏️ Edit
+    </a>
+    <form
+      action="{% url 'delete_phone' pk=item.pk %}"
+      method="POST"
+      onsubmit="return confirm('O‘chirasizmi?');"
+    >
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">🗑 Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="row g-4">
+    <!-- IMAGE -->
+    <div class="col-lg-5">
+      <div
+        class="d-flex justify-content-center align-items-center bg-light rounded"
+        style="height: 400px"
+        data-bs-toggle="modal"
+        data-bs-target="#imgModal"
+      >
+        <img
+          src="{{ item.picture.url }}"
+          class="img-fluid"
+          style="max-height: 380px; object-fit: contain; cursor: pointer"
+        />
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal fade" id="imgModal">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 bg-transparent">
+          <img src="{{ item.picture.url }}" class="img-fluid rounded" />
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0 p-4 h-100">
+        <h2 class="fw-bold mb-2">{{ item.name }}</h2>
+        <h3 class="text-primary mb-3">${{ item.price }}</h3>
+
+        <div class="row small g-2">
+          <div class="col-6"><b>Brand:</b> {{ item.brand }}</div>
+          <div class="col-6"><b>Year:</b> {{ item.release_year  }}</div>
+          <div class="col-6"><b>Display:</b> {{ item.display_size }}</div>
+          <div class="col-6"><b>CPU:</b> {{ item.cpu }}</div>
+          <div class="col-6"><b>RAM:</b> {{ item.ram }}</div>
+          <div class="col-6"><b>Memory:</b> {{ item.memory }}</div>
+          <div class="col-6"><b>Rear:</b> {{ item.rear_camera }}</div>
+          <div class="col-6"><b>Front:</b> {{ item.front_camera }}</div>
+          <div class="col-6"><b>Battery:</b> {{ item.battery }}</div>
+          <div class="col-6"><b>Weight:</b> {{ item.weight }}</div>
+          <div class="col-6"><b>Color:</b> {{ item.color }}</div>
+          <div class="col-6"><b>Material:</b> {{ item.material }}</div>
+        </div>
+
+        <hr />
+
+        <p class="text-muted">{{ item.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

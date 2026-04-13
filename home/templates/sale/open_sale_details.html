@@ -1,0 +1,119 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container py-4">
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="{% url 'sale_view' %}" class="btn btn-outline-secondary fs-5">
+      ← Orqaga
+    </a>
+
+    <form method="POST" onsubmit="return confirm('O‘chirasizmi?');">
+      {% csrf_token %}
+      <button class="btn btn-danger fs-5">🗑 Sotuvni o'chirish</button>
+    </form>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="row g-4">
+    <!-- LEFT: PHONE -->
+    <div class="col-lg-6">
+      <!-- IMAGE -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div
+          class="p-3 text-center bg-light"
+          data-bs-toggle="modal"
+          data-bs-target="#imgModal"
+          style="cursor: pointer"
+        >
+          <img
+            src="{{ item.picture.url }}"
+            class="img-fluid"
+            style="max-height: 350px; object-fit: contain"
+          />
+        </div>
+      </div>
+
+      <!-- MODAL -->
+      <div class="modal fade" id="imgModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content border-0 bg-transparent">
+            <img src="{{ item.picture.url }}" class="img-fluid rounded" />
+          </div>
+        </div>
+      </div>
+
+      <!-- PHONE INFO -->
+      <div class="card border-0 shadow-sm p-4">
+        <h2 class="fw-bold mb-2">{{ item.name }}</h2>
+        <h3 class="text-primary mb-3 fs-2">${{ item.price }}</h3>
+
+        <div class="row fs-5 g-2">
+          <div class="col-6"><b>Brand:</b> {{ item.brand }}</div>
+          <div class="col-6"><b>Year:</b> {{ item.release_year }}</div>
+          <div class="col-6"><b>Display:</b> {{ item.display_size }}</div>
+          <div class="col-6"><b>CPU:</b> {{ item.cpu }}</div>
+          <div class="col-6"><b>RAM:</b> {{ item.ram }}</div>
+          <div class="col-6"><b>Memory:</b> {{ item.memory }}</div>
+          <div class="col-6"><b>Rear:</b> {{ item.rear_camera }}</div>
+          <div class="col-6"><b>Front:</b> {{ item.front_camera }}</div>
+          <div class="col-6"><b>Battery:</b> {{ item.battery }}</div>
+          <div class="col-6"><b>Weight:</b> {{ item.weight }}</div>
+          <div class="col-6"><b>Color:</b> {{ item.color }}</div>
+          <div class="col-6"><b>Material:</b> {{ item.material }}</div>
+        </div>
+
+        <hr />
+        <p class="text-muted fs-5">{{ item.description }}</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: PURCHASE -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm p-4 h-100">
+        <h3 class="fw-bold mb-3">📦 Sotuv Ma'lumotlari</h3>
+
+        <div class="fs-5 mb-3"><b>Telefon:</b> {{ sale.phone }}</div>
+
+        <div class="fs-5 mb-3">
+          <b>Sotildi:</b>
+          <span class="badge bg-primary fs-6"> {{ sale.quantity }} dona </span>
+        </div>
+
+        <!-- STOCK STATUS (IMPROVED) -->
+        <div class="fs-5 mb-3">
+          <b>Mavjud:</b>
+
+          {% if sale.phone.quantity <= 0 %}
+          <span class="badge bg-danger fs-6">Tugadi</span>
+          {% else %}
+          <span class="badge bg-success fs-6">
+            {{ sale.phone.quantity }} dona
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="fs-5 mb-3">
+          <b>Olish narxi:</b>
+          <span class="badge bg-success fs-6"> ${{ sale.price_sold }} </span>
+        </div>
+
+        <div class="fs-5 mb-3">
+          <b>To'lov usuli:</b> {{ sale.payment_method }}
+        </div>
+
+        <div class="fs-5 mb-3"><b>Olingan sana:</b> {{ sale.created_at }}</div>
+
+        <hr />
+
+        <div>
+          <b class="fs-5">Tavsif:</b>
+          <p class="text-muted fs-5 mb-0">
+            {{ sale.description|default:"No description" }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
