@@ -91,6 +91,12 @@ class Purchase(models.Model):
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        self.phone.quantity += self.quantity
+        self.phone.save()
 
     def __str__(self):
         return f"Purchase: {self.phone.name} ({self.created_at.date()})"

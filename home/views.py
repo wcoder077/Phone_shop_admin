@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from django.db.models import F
+
 # references
 from .models import Stuff, Phone, Purchase, Sale
 from .forms import StuffForm, PhoneForm, PurchaseForm, SaleForm
@@ -62,18 +63,16 @@ def purchase_view(request):
 def add_purchase_view(request):
     if request.method == "POST":
         form = PurchaseForm(request.POST)
-        if form.is_valid():
-            with transaction.atomic():
-                # 1. Save the purchase
-                purchase = form.save()
 
-                # 2. Update the Phone directly by ID
-                # This bypasses any "stale" data in Python memory
-                Phone.objects.filter(pk=purchase.phone_id).update(
-                    quantity=F("quantity") + purchase.quantity
-                )
+        if form.is_valid():
+            purchase = form.save()
+
+            phone = purchase.phone
+            phone.quantity += purchase.quantity
+            phone.save()
 
             return redirect("purchase_view")
+
     else:
         form = PurchaseForm()
 
