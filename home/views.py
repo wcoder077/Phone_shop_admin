@@ -107,9 +107,6 @@ def sale_view(request):
     return render(request, "sale/sale.html", context)
 
 
-id = "fixed_view_001"
-
-
 def add_sale_view(request):
     text = None
 

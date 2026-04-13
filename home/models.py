@@ -122,6 +122,12 @@ class Sale(models.Model):
     def __str__(self):
         return f"{self.phone.name} - {self.quantity}pcs"
 
+    def remove(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        self.phone.quantity -= self.quantity
+        self.phone.save()
+        
     @property
     def total_amount(self):
         return self.price_sold * self.quantity
