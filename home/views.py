@@ -149,3 +149,11 @@ def delete_sale_view(request, pk):
     sale.is_deleted = True
     sale.save()
     return redirect("sale_view")
+
+# Stuff
+def stuff_view(request):
+    stuff = Stuff.objects.filter(is_deleted=False)
+    context = {
+        "stuff": stuff
+    }
+    return render(request, "stuff/stuff.html", context)

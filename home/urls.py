@@ -24,6 +24,9 @@ urlpatterns = [
     path("sale/delete_sale/<int:pk>/", views.delete_sale_view, name="delete_sale_view"),
     path("sale/sale_details/<int:pk>/", views.open_sale_details_view, name="open_sale_details_view"),
     
+    # Stuff
+    path("stuff/", views.stuff_view, name="stuff_view"),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

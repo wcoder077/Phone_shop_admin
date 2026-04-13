@@ -33,6 +33,7 @@ class Stuff(models.Model):
     hired_date = models.DateField(auto_now_add=True)
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     photo = models.ImageField(upload_to="staff_photos/", blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.full_name} - {self.role}"
