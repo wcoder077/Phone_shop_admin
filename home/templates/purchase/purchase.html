@@ -65,8 +65,8 @@
                   justify-content: center;
                 ">
                 <li>
-                  <a class="btn btn-warning " title="delete" onclick="return confirm('Ochirasizmi');"
-                    href="{% url 'delete_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
+                  <a class="btn btn-warning " title="delete"
+                    href="{% url 'edit_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
                 </li>
                 <li>
                   <a class="btn btn-danger text-danger" title="delete" onclick="return confirm('Ochirasizmi');"

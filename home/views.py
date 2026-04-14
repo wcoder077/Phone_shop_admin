@@ -78,6 +78,20 @@ def add_purchase_view(request):
 
     return render(request, "purchase/add_purchase.html", {"form": form})
 
+def edit_purchase_view(request, pk):
+    purchase = get_object_or_404(Purchase, pk=pk)
+
+    if request.method == "POST":
+        form = PurchaseForm(request.POST, request.FILES, instance=purchase)
+        if form.is_valid():
+            form.save()
+            return redirect("purchase_view")
+    else:
+        form = PurchaseForm(instance=purchase)
+
+    return render(request, "purchase/edit_purchase.html", {"form": form})
+
+
 
 def delete_purchase_view(request, pk):
     purchase = get_object_or_404(Purchase, pk=pk)
@@ -134,7 +148,7 @@ def add_sale_view(request):
 
 
 def open_sale_details_view(request, pk):
-    sale = get_object_or_404(Purchase, pk=pk)
+    sale = get_object_or_404(Sale, pk=pk)
     phone = sale.phone
 
     context = {

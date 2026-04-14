@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Purchase
     path("purchase/", views.purchase_view, name="purchase_view"),
+    path("purchase/edit_purchase/<int:pk>/", views.edit_purchase_view, name="edit_purchase_view"),
     path("purchase/add_purchase/", views.add_purchase_view, name="add_purchase_view"),
     path("purchase/delete_purchase/<int:pk>/", views.delete_purchase_view, name="delete_purchase_view"),
     path("purchase/purchase_details/<int:pk>/", views.open_purchase_details_view, name="open_purchase_details_view"),
