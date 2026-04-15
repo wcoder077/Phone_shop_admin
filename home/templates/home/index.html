@@ -1,32 +1,40 @@
-{% extends "base.html" %}
-{% load static %}
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block content %}
 
-<div style=" display: flex; justify-content:center; align-items: center; gap: 30px; margin:30px 0px;">
+<div
+  class="w-100 d-flex justify-content-around"
+  style="
+    align-items: center;
+    gap: 30px;
+    margin: 30px 0px;
+  "
+
+>
   <h3 class="">Phones</h3>
-  <a href="{% url 'add_phone' %}" class="btn btn-primary ">+ Add phone</a>
+  <a href="{% url 'add_phone' %}" class="btn btn-primary">+ Add phone</a>
 </div>
 
 <div class="row g-4">
-
   {% for item in items %}
   <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-
-    <a href="{% url 'open_phone_details' pk=item.pk %}" class="text-decoration-none text-dark">
-
+    <a
+      href="{% url 'open_phone_details' pk=item.pk %}"
+      class="text-decoration-none text-dark"
+    >
       <div class="card h-100 shadow-sm border-0">
-
         <!-- IMAGE (Bootstrap only) -->
-        <div class="d-flex justify-content-center align-items-center bg-light"
-             style="height:180px;">
-          <img src="{{ item.picture.url }}"
-               class="img-fluid"
-               style="max-height:160px; object-fit:contain;">
+        <div
+          class="d-flex justify-content-center align-items-center bg-light"
+          style="height: 180px"
+        >
+          <img
+            src="{{ item.picture.url }}"
+            class="img-fluid"
+            style="max-height: 160px; object-fit: contain"
+          />
         </div>
 
         <!-- BODY -->
         <div class="card-body d-flex flex-column justify-content-between">
-
           <div>
             <h6 class="fw-bold mb-1">{{ item.name }}</h6>
             <p class="text-muted small mb-2">
@@ -35,23 +43,19 @@
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-secondary">
-              {{ item.quantity }} dona
+            {% if item.quantity == 0 %}<span class="badge bg-danger px-3 py-2">
+              Tugadi
             </span>
-            <span class="fw-bold text-primary">
-              ${{ item.price }}
-            </span>
+            {% else %}
+            <span class="badge bg-secondary"> {{ item.quantity }} dona</span>
+            {%endif %}
+            <span class="fw-bold text-primary"> ${{ item.price }} </span>
           </div>
-
         </div>
-
       </div>
-
     </a>
-
   </div>
   {% endfor %}
-
 </div>
 
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends "base.html" %} 
 {% block content %}
 
-<div class="d-flex justify-content-between gap-2 align-items-center mb-4">
-  <a href="{% url 'home' %}" class="btn btn-outline-secondary"> ← Orqaga </a>
+<div class="w-100 d-flex justify-content-around gap-2 align-items-center mb-4">
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary fs-5"> ← Orqaga </a>
 
-  <div class="d-flex gap-2">
+  <div class="d-flex gap-2 ">
     <a href="{% url 'edit_phone' pk=item.pk %}" class="btn btn-warning">
       ✏️ Edit
     </a>

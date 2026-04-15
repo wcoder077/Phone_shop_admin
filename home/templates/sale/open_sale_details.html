@@ -6,11 +6,15 @@
     <a href="{% url 'sale_view' %}" class="btn btn-outline-secondary fs-5">
       ← Orqaga
     </a>
-
+    <div class="sale d-flex gap-3">
+      <a href="{% url 'edit_sale_view' pk=sale.pk %}" class="btn btn-warning">
+      ✏️ Edit
+    </a>
     <form method="POST" onsubmit="return confirm('O‘chirasizmi?');">
       {% csrf_token %}
       <button class="btn btn-danger fs-5">🗑 Sotuvni o'chirish</button>
     </form>
+    </div>
   </div>
 
   <!-- MAIN GRID -->

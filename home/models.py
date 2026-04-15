@@ -31,7 +31,8 @@ class Stuff(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="seller")
     phone = models.CharField(max_length=20)
     hired_date = models.DateField(auto_now_add=True)
-    salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    departure_date = models.DateField(blank=True, null=True)
+    salary = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     photo = models.ImageField(upload_to="staff_photos/", blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
 
@@ -48,7 +49,7 @@ class Phone(models.Model):
         limit_choices_to={"type": "brand"},
         related_name="brand_phones",
     )
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=1)
     release_year = models.PositiveIntegerField()
     display_size = models.CharField(max_length=20)
     resolution = models.CharField(max_length=50)
@@ -77,7 +78,7 @@ class Phone(models.Model):
     )
     material = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
 
@@ -88,7 +89,7 @@ class Phone(models.Model):
 class Purchase(models.Model):
     phone = models.ForeignKey(Phone, on_delete=models.CASCADE, related_name="purchases")
     quantity = models.PositiveIntegerField(default=1)
-    cost_price = models.DecimalField(max_digits=12, decimal_places=2)
+    cost_price = models.DecimalField(max_digits=12, decimal_places=1)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -111,7 +112,7 @@ class Sale(models.Model):
     )
     phone = models.ForeignKey(Phone, on_delete=models.PROTECT, related_name="sales")
     quantity = models.PositiveIntegerField(default=1)
-    price_sold = models.DecimalField(max_digits=10, decimal_places=2)
+    price_sold = models.DecimalField(max_digits=10, decimal_places=1)
     payment_method = models.CharField(
         max_length=10, choices=PAYMENT_METHODS, default="cash"
     )

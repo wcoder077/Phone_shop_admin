@@ -3,9 +3,11 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="w-100 d-flex justify-content-start">
-        <a href="{% url 'home' %}" class="btn btn-secondary">Orqaga</a>
-    </div>
+    <div class="w-100 d-flex justify-content-evenly align-items-center mt-3 mb-4">
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary fs-5"> ← Orqaga </a>
+
+  <h4 class="mb-0">Telefonni Malumotlari</h4>
+</div>
 
     <form method="POST" enctype="multipart/form-data" class="w-50 mx-auto mt-5 p-5 shadow-sm bg-white rounded">
         {% csrf_token %}

@@ -1,0 +1,5 @@
+<form action="{% url 'profile_update_view' %}" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Saqlash</button>
+</form>

@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "crispy_forms",
     'widget_tweaks',
+    'accounts',
     'home',
 ]
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -30,6 +31,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+LOGIN_URL = 'login_view'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -87,4 +90,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

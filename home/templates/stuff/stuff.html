@@ -1,13 +1,12 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="container-fluid py-4 ">
-
+<div class="container-fluid py-4">
     <div class="card shadow-sm border-0">
         <!-- HEADER -->
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">📦 Sotuv bo‘limi</h5>
-            <a href="{% url 'add_sale_view' %}" class="btn btn-info">
-                + Sotuv qo'shish</a>
+            <h5 class="mb-0">📦 Hodimlar bo‘limi</h5>
+            <a href="{% url 'add_stuff_view' %}" class="btn btn-info">
+                + Hodim qo'shish</a>
         </div>
 
         <!-- TABLE -->
@@ -15,83 +14,86 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Telefon</th>
-                        <th>Sotildi</th>
-                        <th>Mavjud</th>
-                        <th>Sotilgan narxi</th>
-                        <th>To'lov usuli</th>
-                        <th>Sotilgan sana</th>
-                        <th>Izoh</th>
+                        <th>F.I.SH</th>
+                        <th>Lavozim</th>
+                        <th>Telefon raqam</th>
+                        <th>Ishga kelgan sana</th>
+                        <th>Ishdan ketgan sana</th>
+                        <th>Oylik maosh</th>
+
                         <th class="text-end">Amallar</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    {% for sale in sales %}
+                    {% for stuff in stuffs %}
+                    <tr class="clickable-row align-middle" data-url="{% url 'open_stuff_details_view' stuff.pk %}" style="cursor: pointer;">
 
-                    <tr class="clickable-row" style="cursor:pointer" data-url="{% url 'open_sale_details_view' pk=sale.pk %}">
+                        <!-- USER -->
                         <td>
-                            <i class="fa-solid fa-mobile-screen-button me-2 text-secondary"></i>
-                            <strong>{{ sale.phone }}</strong>
+                            <div class="d-flex align-items-center gap-2">
+
+                                <div style="width:50px; height:50px;">
+                                    {% if stuff.photo %}
+                                    <img src="{{ stuff.photo.url }}" alt="{{ stuff.full_name }}" class="rounded-circle"
+                                        style="width:50px; height:50px; object-fit:cover;">
+                                    {% else %}
+                                    <div class="d-flex justify-content-center align-items-center bg-light rounded-circle"
+                                        style="width:50px; height:50px;">
+                                        <i class="fa-solid fa-user text-secondary"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <strong>{{ stuff.full_name|default:"No name" }}</strong>
+                            </div>
                         </td>
 
+                        <!-- ROLE -->
                         <td>
-                            <span class="badge bg-primary px-3 py-2">
-                                {{ sale.quantity }}
+                            <span class="badge bg-primary">
+                                {{ stuff.role|default:"-" }}
                             </span>
                         </td>
+
+                        <!-- PHONE -->
+                        <td>{{ stuff.phone|default:"-" }}</td>
+
+                        <!-- HIRED DATE -->
+                        <td>{{ stuff.hired_date|date:"Y-m-d"|default:"-" }}</td>
+
+                        <!-- DEPARTURE -->
                         <td>
-                            {% if sale.phone.quantity == 0 %}
-                            <span class="badge bg-danger px-3 py-2">
-                                Tugadi
-                            </span>
+                            {% if stuff.departure_date %}
+                            {{ stuff.departure_date|date:"Y-m-d" }}
                             {% else %}
-                            <span class="badge bg-success px-3 py-2">
-                                {{ sale.phone.quantity }}
-                            </span>
+                            <span class="text-muted">yo‘q</span>
                             {% endif %}
-
-                        </td>
-                        <td>
-                            <span class="fw-semibold text-success">
-                                {{ sale.price_sold }} $
-                            </span>
-                        </td>
-                        <td>
-                            <span class="fw-semibold text-primary">
-                                {{ sale.payment_method }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="text-muted small">
-                                {{ sale.created_at|date:"Y-m-d H:i" }}
-                            </span>
                         </td>
 
-                        <td>{{ sale.description|truncatewords:5 }}</td>
+                        <!-- SALARY -->
+                        <td class="text-success fs-5">$ {{ stuff.salary|default:"0"  }}</td>
 
-                        <td class="text-end">
-                            <ul style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  list-style: none;
-                  gap: 10px;
-                  align-items: center;
-                  justify-content: center;
-                ">
-                                <li>
-                                    <a class="btn btn-warning " title="delete" onclick="return confirm('Ochirasizmi');"
-                                        href="{% url 'delete_sale_view' pk=sale.pk %}"><i
-                                            class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
-                                </li>
-                                <li>
-                                    <a class="btn btn-danger text-danger" title="delete"
-                                        onclick="return confirm('Ochirasizmi');"
-                                        href="{% url 'delete_sale_view' pk=sale.pk %}"><i class="fa-solid fa-trash"
-                                            style="color: rgb(255, 255, 255)"></i></a>
-                                </li>
-                            </ul>
+                        <!-- ACTIONS -->
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <a class="btn btn-warning btn-sm" href="{% url 'edit_stuff_view' pk=stuff.pk %}">
+                                    <i class="fa-solid fa-pen-to-square text-white"></i>
+                                </a>
+
+                                <a class="btn btn-danger btn-sm" onclick="return confirm('Rostdan o‘chirmoqchimisiz?');"
+                                    href="{% url 'delete_stuff_view' pk=stuff.pk %}">
+                                    <i class="fa-solid fa-trash text-white"></i>
+                                </a>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-3">
+                            Hech qanday ma'lumot yo‘q
                         </td>
                     </tr>
                     {% endfor %}
@@ -101,7 +103,7 @@
     </div>
 </div>
 <script>
-    document.querySelectorAll(".clickable-row").forEach(row => {
+    document.querySelectorAll(".clickable-row").forEach((row) => {
         row.addEventListener("click", () => {
             window.location.href = row.dataset.url;
         });

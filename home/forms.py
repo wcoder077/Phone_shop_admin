@@ -5,7 +5,7 @@ class StuffForm(forms.ModelForm):
     
     class Meta:
         model = Stuff
-        fields = ("full_name","role", "phone","salary","photo",)
+        fields = ("full_name","role", "departure_date", "phone","salary","photo",)
 
 class PhoneForm(forms.ModelForm):
     
