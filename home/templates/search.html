@@ -1,135 +1,104 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 
-<div class="container py-4">
-  <!-- HEADER -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0">🔎 Natija: "{{ query }}"</h3>
-
-    <div class="d-flex gap-2">
-      <a href="{% url 'home' %}" class="btn btn-outline-primary"> 🏠 Home </a>
-    </div>
-  </div>
-
-  <!-- GRID -->
-  <div class="row g-4">
-    <!-- 📱 PHONES -->
-    <div class="col-12">
-      <div class="card shadow-sm border-0 p-3">
-        <h4 class="mb-3">📱 Telefonlar</h4>
-
-        <div class="row g-3">
-          {% for p in phones %}
-          <div class="col-md-3 col-sm-6">
-            <a
-              href="{% url 'open_phone_details' p.pk %}"
-              class="text-decoration-none text-dark"
-            >
-              <div class="card h-100 shadow-sm hover-card">
-                {% if p.picture %}
-                <img
-                  src="{{ p.picture.url }}"
-                  class="card-img-top"
-                  style="height: 180px; object-fit: cover"
-                />
-                {% endif %}
-
-                <div class="card-body">
-                  <h6 class="fw-bold">{{ p.name }}</h6>
-                  <p class="text-primary mb-1">${{ p.price }}</p>
-                  <small class="text-muted">{{ p.brand.value }}</small>
-                </div>
-              </div>
-            </a>
-          </div>
-          {% empty %}
-          <p class="text-muted">Telefon topilmadi</p>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <!-- 💰 SALES -->
-    <div class="col-12">
-      <div class="card shadow-sm border-0 p-3">
-        <h4 class="mb-3">💰 Sotuvlar</h4>
-
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
-            <thead>
-              <tr>
-                <th>Telefon</th>
-                <th>Soni</th>
-                <th>Narx</th>
-                <th>To‘lov</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for s in sales %}
-              <tr>
-                <td>{{ s.phone.name }}</td>
-                <td>{{ s.quantity }}</td>
-                <td>${{ s.price_sold }}</td>
-                <td>
-                  <span class="badge bg-info">{{ s.payment_method }}</span>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="4" class="text-center text-muted">Sotuv yo‘q</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 👤 STAFF -->
-    <div class="col-12">
-      <div class="card shadow-sm border-0 p-3">
-        <h4 class="mb-3">👤 Xodimlar</h4>
-
-        <div class="row g-3">
-          {% for s in stuffs %}
-          <div class="col-md-3 col-sm-6">
-            <a
-              href="{% url 'open_stuff_details_view' s.pk %}"
-              class="text-decoration-none text-dark"
-            >
-              <div class="card h-100 shadow-sm text-center p-3 hover-card">
-                {% if s.photo %}
-                <img
-                  src="{{ s.photo.url }}"
-                  class="rounded-circle mx-auto"
-                  style="width: 80px; height: 80px; object-fit: cover"
-                />
-                {% else %}
-                <i class="fa-solid fa-user fa-3x text-secondary"></i>
-                {% endif %}
-
-                <h6 class="mt-2">{{ s.full_name }}</h6>
-                <span class="badge bg-primary">{{ s.role }}</span>
-              </div>
-            </a>
-          </div>
-          {% empty %}
-          <p class="text-muted">Xodim topilmadi</p>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <h4 class="fw-bold mb-0">🔎 Natija: "{{ query }}"</h4>
+  <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+    <i class="bx bx-home me-1"></i> Home
+  </a>
 </div>
 
-<!-- HOVER STYLE -->
+<!-- GRID -->
+<div class="d-flex flex-column gap-4">
+
+  <!-- PHONES -->
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <h5 class="fw-bold mb-3">📱 Telefonlar</h5>
+    <div class="row g-3">
+      {% for p in phones %}
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+        <a href="{% url 'open_phone_details' p.pk %}" class="text-decoration-none text-dark d-block h-100">
+          <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden" style="transition: transform 0.2s;">
+            {% if p.picture %}
+              <div class="d-flex justify-content-center align-items-center bg-light" style="height:130px;">
+                <img src="{{ p.picture.url }}" class="img-fluid p-2" style="max-height:120px; object-fit:contain;" />
+              </div>
+            {% endif %}
+            <div class="card-body p-2">
+              <div class="fw-semibold small text-truncate">{{ p.name }}</div>
+              <div class="text-primary small fw-bold">${{ p.price }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12"><p class="text-muted mb-0">Telefon topilmadi</p></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- SALES -->
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <h5 class="fw-bold mb-3">💰 Sotuvlar</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Telefon</th>
+            <th>Soni</th>
+            <th>Narx</th>
+            <th>To'lov</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sales %}
+          <tr>
+            <td><strong>{{ s.phone.name }}</strong></td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1 rounded-pill">{{ s.quantity }} dona</span></td>
+            <td><span class="fw-bold text-success">${{ s.price_sold }}</span></td>
+            <td><span class="badge bg-info-subtle text-info border border-info px-2 py-1 rounded-pill">{{ s.payment_method }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-muted py-3">Sotuv topilmadi</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STAFF -->
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <h5 class="fw-bold mb-3">👤 Xodimlar</h5>
+    <div class="row g-3">
+      {% for s in stuffs %}
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+        <a href="{% url 'open_stuff_details_view' s.pk %}" class="text-decoration-none text-dark d-block h-100">
+          <div class="card h-100 border-0 shadow-sm rounded-3 text-center p-3">
+            {% if s.photo %}
+              <img src="{{ s.photo.url }}" class="rounded-circle mx-auto mb-2"
+                   style="width:64px; height:64px; object-fit:cover;" />
+            {% else %}
+              <div class="d-flex justify-content-center align-items-center bg-secondary bg-opacity-10 rounded-circle mx-auto mb-2"
+                   style="width:64px; height:64px;">
+                <i class="fa-solid fa-user fa-lg text-secondary"></i>
+              </div>
+            {% endif %}
+            <div class="fw-semibold small text-truncate">{{ s.full_name }}</div>
+            <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1 rounded-pill mt-1 small">{{ s.role }}</span>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12"><p class="text-muted mb-0">Xodim topilmadi</p></div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
 <style>
-  .hover-card {
-    transition: 0.2s ease;
-  }
-  .hover-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
+  .card:hover { transform: translateY(-3px); }
 </style>
 
 {% endblock %}

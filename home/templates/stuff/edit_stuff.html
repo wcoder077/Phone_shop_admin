@@ -1,34 +1,42 @@
-{% extends "base.html" %} {% load widget_tweaks %} {% block content %}
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
 
-<div class="w-100 d-flex justify-content-evenly align-items-center mt-3 mb-4">
-  <a href="{% url 'stuff_view' %}" class="btn btn-outline-secondary fs-5"> ← Orqaga </a>
-
-  <h4 class="mb-0">Hodim malumotlarini tahrirlash</h4>
+<!-- Page Header -->
+<div class="mb-4">
+  <a href="{% url 'stuff_view' %}" class="btn btn-outline-secondary btn-sm mb-3">
+    <i class="bx bx-arrow-back me-1"></i> Orqaga
+  </a>
+  <h4 class="fw-bold mb-0">✏️ Hodimni tahrirlash</h4>
+  <p class="text-muted small mb-0">Hodim ma'lumotlarini o'zgartiring va saqlang</p>
 </div>
 
-<form
-  method="POST"
-  enctype="multipart/form-data"
-  class="w-50 mx-auto p-4 shadow rounded bg-white"
->
-  {% csrf_token %} {% for field in form %}
-  <div class="mb-3">
-    {{ field.label_tag }} 
-    {{ field|add_class:"form-control" }} 
-
-    {% if field.errors %}
-      <div class="text-danger small">{{ field.errors }}</div>
-    {% endif %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+    <div class="card shadow-sm border-0 rounded-4 p-4">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ field.label }}</label>
+          {% if field.field.widget.input_type == "select" %}
+            {{ field|add_class:"form-select rounded-3" }}
+          {% else %}
+            {{ field|add_class:"form-control rounded-3" }}
+          {% endif %}
+          {% if field.errors %}
+            <div class="text-danger small mt-1">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-warning rounded-pill py-2 fs-6" onclick="return confirm('O\'zgarishlarni saqlaysizmi?')">
+            <i class="bx bx-save me-2"></i>Saqlash
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-{% endfor %}
-
-  <button
-    type="submit"
-    class="btn btn-primary w-100"
-    onclick="return confirm('O‘zgarishlarni saqlaysizmi?');"
-  >
-    Saqlash
-  </button>
-</form>
+</div>
 
 {% endblock content %}

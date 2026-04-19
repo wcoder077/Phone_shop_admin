@@ -61,7 +61,8 @@
         <div class="app-brand demo">
           <a href="index.html" class="app-brand-link">
             <span class="app-brand-logo demo">
-              <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             <a href="/">
+               <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <defs>
                   <path
@@ -103,8 +104,9 @@
                   </g>
                 </g>
               </svg>
+             </a>
             </span>
-            <a href="{% url 'home' %}" class="app-brand-text demo menu-text fw-bolder ms-2">Shop Admin</a>
+            <a href="/" class="app-brand-text demo menu-text fw-bolder ms-2">Shop Admin</a>
           </a>
 
           <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -132,13 +134,13 @@
           <li
             class="menu-item {% if request.resolver_match.url_name == 'sale_view' or request.resolver_match.url_name == 'add_sale_view' or request.resolver_match.url_name == 'open_sale_details_view' or request.resolver_match.url_name == 'edit_sale_view' %}active{% endif %}">
             <a href="{% url 'sale_view' %}" class="menu-link">
-              <i class="menu-icon tf-icons bx bx-receipt"></i>
+              <i class="menu-icon tf-icons bx bx-dollar"></i>
               <div>Sotuvlar</div>
             </a>
           </li>
           <li class="menu-item {% if request.resolver_match.url_name == 'stuff_view' %}active{% endif %}">
             <a href="{% url 'stuff_view' %}" class="menu-link">
-              <i class="menu-icon tf-icons bx bx-receipt"></i>
+              <i class="menu-icon tf-icons bx bx-user"></i>
               <div>Xodimlar</div>
             </a>
           </li>
@@ -240,10 +242,11 @@
         <!-- / Navbar -->
 
         <!-- Content wrapper -->
-        <div class="content-wrapper px-5 d-flex flex-column justify-content-center align-items-center">
+        <div class="content-wrapper">
           <!-- Content -->
-
-          {% block content %} {% endblock content %}
+          <div class="container-xxl flex-grow-1 container-p-y">
+            {% block content %} {% endblock content %}
+          </div>
           <!-- / Content -->
 
           <!-- Footer -->
@@ -254,16 +257,17 @@
                 <script>
                   document.write(new Date().getFullYear());
                 </script>
-                , made with ❤️ by
-                <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                : made by alex
               </div>
               <div>
-                <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+
+                {% comment %} <a href="https://themeselection.com/license/" class="footer-link me-4"
+                  target="_blank">License</a>
                 <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
                 <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
                   target="_blank" class="footer-link me-4">Documentation</a>
                 <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank"
-                  class="footer-link me-4">Support</a>
+                  class="footer-link me-4">Support</a> {% endcomment %}
               </div>
             </div>
           </footer>

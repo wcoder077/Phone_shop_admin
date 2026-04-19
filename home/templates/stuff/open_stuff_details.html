@@ -1,93 +1,98 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container py-4">
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+  <a href="{% url 'stuff_view' %}" class="btn btn-outline-secondary btn-sm">
+    <i class="bx bx-arrow-back me-1"></i>
+    <span class="d-none d-sm-inline">Orqaga</span>
+  </a>
+  <div class="d-flex gap-2 flex-shrink-0">
+    <a href="{% url 'edit_stuff_view' pk=stuff.pk %}" class="btn btn-warning btn-sm">
+      <i class="bx bx-edit"></i>
+      <span class="d-none d-sm-inline ms-1">Tahrirlash</span>
+    </a>
+    <form method="POST" onsubmit="return confirm('O\'chirasizmi?');">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-sm">
+        <i class="bx bx-trash"></i>
+        <span class="d-none d-sm-inline ms-1">O'chirish</span>
+      </button>
+    </form>
+  </div>
+</div>
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{% url 'stuff_view' %}" class="btn btn-outline-secondary fs-5">
-            ← Orqaga
-        </a>
-        <div class="d-flex justify-content-center gap-2">
-            <a class="btn btn-warning fs-5" href="{% url 'edit_stuff_view' pk=stuff.pk %}">
-                <i class="fa-solid fa-pen-to-square text-white"></i>Tahrirlash
-            </a>
-            <form method="POST" onsubmit="return confirm('O‘chirasizmi?');">
-            {% csrf_token %}
-            <button class="btn btn-danger fs-5">🗑 O‘chirish</button>
-        </form>
-        </div>
-       
+<!-- MAIN GRID -->
+<div class="row g-4">
+
+  <!-- LEFT: PHOTO + INFO -->
+  <div class="col-12 col-lg-5">
+
+    <!-- PHOTO -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
+      <div class="d-flex justify-content-center align-items-center bg-light p-4"
+           style="min-height: 280px;">
+        {% if stuff.photo %}
+          <img src="{{ stuff.photo.url }}" class="rounded-circle shadow"
+               style="width: 200px; height: 200px; object-fit: cover;" />
+        {% else %}
+          <div class="d-flex justify-content-center align-items-center bg-secondary bg-opacity-10 rounded-circle"
+               style="width: 160px; height: 160px;">
+            <i class="fa-solid fa-user fa-4x text-secondary"></i>
+          </div>
+        {% endif %}
+      </div>
+      <div class="text-center pb-4">
+        <h4 class="fw-bold mb-1">{{ stuff.full_name }}</h4>
+        <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill">
+          {{ stuff.role|default:"Lavozim ko'rsatilmagan" }}
+        </span>
+      </div>
     </div>
+  </div>
 
-    <div class="row g-4">
+  <!-- RIGHT: DETAILS -->
+  <div class="col-12 col-lg-7">
+    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+      <h4 class="fw-bold mb-4">👤 Hodim Ma'lumotlari</h4>
 
-        <!-- LEFT: STAFF -->
-        <div class="col-lg-6">
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Telefon raqam</div>
+        <div class="fw-semibold"><i class="fa-solid fa-phone me-2 text-primary"></i>{{ stuff.phone|default:"-" }}</div>
+      </div>
 
-            <!-- IMAGE -->
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="p-3 text-center bg-light">
-                    {% if stuff.photo %}
-                    <img src="{{ stuff.photo.url }}" class="img-fluid rounded"
-                        style="max-height: 350px; object-fit: cover;">
-                    {% else %}
-                    <div class="d-flex justify-content-center align-items-center" style="height: 350px;">
-                        <i class="fa-solid fa-user fa-4x text-secondary"></i>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Maosh</div>
+        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill fs-6">
+          ${{ stuff.salary|default:"0" }}
+        </span>
+      </div>
 
-            <!-- INFO -->
-            <div class="card border-0 shadow-sm p-4">
-                <h2 class="fw-bold mb-2">{{ stuff.full_name }}</h2>
-
-                <div class="fs-5 mb-2">
-                    <b>Lavozim:</b>
-                    <span class="badge bg-primary">{{ stuff.role }}</span>
-                </div>
-
-                <div class="fs-5 mb-2">
-                    <b>Telefon:</b> {{ stuff.phone }}
-                </div>
-
-                <div class="fs-5 mb-2">
-                    <b>Ishga kirgan sana:</b> {{ stuff.hired_date|date:"Y-m-d" }}
-                </div>
-
-                <div class="fs-5 mb-2">
-                    <b>Ishdan ketgan:</b>
-                    {% if stuff.departure_date %}
-                    {{ stuff.departure_date|date:"Y-m-d" }}
-                    {% else %}
-                    <span class="text-muted">yo‘q</span>
-                    {% endif %}
-                </div>
-
-                <div class="fs-5 mb-2">
-                    <b>Maosh:</b> ${{ stuff.salary }}
-                </div>
-
-            </div>
-
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Ishga kirgan sana</div>
+        <div class="fw-semibold">
+          <i class="fa-regular fa-calendar-check me-2 text-success"></i>
+          {{ stuff.hired_date|date:"Y-m-d"|default:"-" }}
         </div>
+      </div>
 
-        <!-- RIGHT: EXTRA INFO -->
-        <div class="col-lg-6">
-
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h3 class="fw-bold mb-3">ℹ️ Qo‘shimcha</h3>
-
-                <p class="text-muted fs-5">
-                    Bu xodim haqida qo‘shimcha ma’lumot yo‘q.
-                </p>
-
-            </div>
-
-        </div>
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Ishdan ketgan sana</div>
+        {% if stuff.departure_date %}
+          <div class="fw-semibold">
+            <i class="fa-regular fa-calendar-xmark me-2 text-danger"></i>
+            {{ stuff.departure_date|date:"Y-m-d" }}
+          </div>
+        {% else %}
+          <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">
+            <i class="fa-solid fa-check-circle me-1"></i> Hali ishlayapti
+          </span>
+        {% endif %}
+      </div>
 
     </div>
+  </div>
+
 </div>
 
 {% endblock %}

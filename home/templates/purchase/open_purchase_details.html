@@ -1,110 +1,158 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
-<div class="container py-4">
-
-  <!-- HEADER -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <a href="{% url 'purchase_view' %}" class="btn btn-outline-secondary fs-5">
-      ← Orqaga
+<!-- HEADER -->
+<div
+  class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4"
+>
+  <a href="{% url 'purchase_view' %}" class="btn btn-outline-secondary">
+    <i class="bx bx-arrow-back me-1"></i> Orqaga
+  </a>
+  <div class="d-flex gap-2">
+    <a href="{% url 'edit_purchase_view' pk=purchase.pk %}" class="btn btn-warning">
+      <i class="bx bx-edit me-1"></i> Tahrirlash
     </a>
-
-    <form method="POST" onsubmit="return confirm('O‘chirasizmi?');">
+    <form method="POST" onsubmit="return confirm('O\'chirasizmi?');">
       {% csrf_token %}
-      <button class="btn btn-danger fs-5">🗑 Xaridni o'chirish</button>
+      <button class="btn btn-danger">
+        <i class="bx bx-trash me-1"></i> O'chirish
+      </button>
     </form>
   </div>
+</div>
 
-  <!-- MAIN GRID -->
-  <div class="row g-4">
-
-    <!-- LEFT: PHONE -->
-    <div class="col-lg-6">
-
-      <!-- IMAGE -->
-      <div class="card border-0 shadow-sm mb-3">
-        <div class="p-3 text-center bg-light"
-             data-bs-toggle="modal"
-             data-bs-target="#imgModal"
-             style="cursor:pointer;">
-          <img src="{{ item.picture.url }}"
-               class="img-fluid"
-               style="max-height: 350px; object-fit: contain;">
+<!-- MAIN GRID -->
+<div class="row g-4">
+  <!-- LEFT: PHONE -->
+  <div class="col-12 col-lg-6">
+    <!-- IMAGE -->
+    <div
+      class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3"
+      data-bs-toggle="modal"
+      data-bs-target="#imgModal"
+      style="cursor: pointer"
+    >
+      <div
+        class="d-flex justify-content-center align-items-center bg-light p-4"
+        style="min-height: 280px"
+      >
+        {% if item.picture %}
+        <img
+          src="{{ item.picture.url }}"
+          class="img-fluid"
+          style="max-height: 260px; object-fit: contain"
+        />
+        {% else %}
+        <div class="text-muted text-center">
+          <i class="bx bx-image fs-1 d-block mb-2"></i>
+          <span>Rasm yo'q</span>
         </div>
+        {% endif %}
       </div>
-
-      <!-- MODAL -->
-      <div class="modal fade" id="imgModal">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content border-0 bg-transparent">
-            <img src="{{ item.picture.url }}" class="img-fluid rounded">
-          </div>
-        </div>
-      </div>
-
-      <!-- PHONE INFO -->
-      <div class="card border-0 shadow-sm p-4">
-        <h2 class="fw-bold mb-2">{{ item.name }}</h2>
-        <h3 class="text-primary mb-3 fs-2">${{ item.price }}</h3>
-
-        <div class="row fs-5 g-2">
-          <div class="col-6"><b>Brand:</b> {{ item.brand }}</div>
-          <div class="col-6"><b>Year:</b> {{ item.release_year }}</div>
-          <div class="col-6"><b>Display:</b> {{ item.display_size }}</div>
-          <div class="col-6"><b>CPU:</b> {{ item.cpu }}</div>
-          <div class="col-6"><b>RAM:</b> {{ item.ram }}</div>
-          <div class="col-6"><b>Memory:</b> {{ item.memory }}</div>
-          <div class="col-6"><b>Rear:</b> {{ item.rear_camera }}</div>
-          <div class="col-6"><b>Front:</b> {{ item.front_camera }}</div>
-          <div class="col-6"><b>Battery:</b> {{ item.battery }}</div>
-          <div class="col-6"><b>Weight:</b> {{ item.weight }}</div>
-          <div class="col-6"><b>Color:</b> {{ item.color }}</div>
-          <div class="col-6"><b>Material:</b> {{ item.material }}</div>
-        </div>
-
-        <hr>
-        <p class="text-muted fs-5">{{ item.description }}</p>
-      </div>
-
     </div>
 
-    <!-- RIGHT: PURCHASE -->
-    <div class="col-lg-6">
-
-      <div class="card border-0 shadow-sm p-4 h-100">
-        <h3 class="fw-bold mb-3">📦 Xarid Ma'lumotlari</h3>
-
-        <div class="fs-5 mb-3">
-          <b>Telefon:</b> {{ purchase.phone }}
+    {% if item.picture %}
+    <div class="modal fade" id="imgModal">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 bg-transparent">
+          <img src="{{ item.picture.url }}" class="img-fluid rounded" />
         </div>
+      </div>
+    </div>
+    {% endif %}
 
-        <div class="fs-5 mb-3">
-          <b>Soni:</b> 
-          <span class="badge bg-primary fs-6">{{ purchase.quantity }} dona</span>
+    <!-- PHONE INFO -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h2 class="fw-bold mb-1">{{ item.name }}</h2>
+      <h4 class="text-primary mb-3">${{ item.price }}</h4>
+      <div class="row g-2 small">
+        <div class="col-6">
+          <span class="text-muted">Brand:</span>
+          <strong>{{ item.brand }}</strong>
         </div>
-
-        <div class="fs-5 mb-3">
-          <b>Olish narxi:</b>
-          <span class="badge bg-success fs-6">${{ purchase.cost_price }}</span>
+        <div class="col-6">
+          <span class="text-muted">Yil:</span>
+          <strong>{{ item.release_year }}</strong>
         </div>
-
-        <div class="fs-5 mb-3">
-          <b>Olingan sana:</b> {{ purchase.created_at }}
+        <div class="col-6">
+          <span class="text-muted">Ekran:</span>
+          <strong>{{ item.display_size }}</strong>
         </div>
-
-        <hr>
-
-        <div>
-          <b class="fs-5">Tavsif:</b>
-          <p class="text-muted fs-5 mb-0">
-            {{ purchase.description|default:"No description" }}
-          </p>
+        <div class="col-6">
+          <span class="text-muted">CPU:</span> <strong>{{ item.cpu }}</strong>
         </div>
+        <div class="col-6">
+          <span class="text-muted">RAM:</span> <strong>{{ item.ram }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted">Xotira:</span>
+          <strong>{{ item.memory }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted">Orqa kamera:</span>
+          <strong>{{ item.rear_camera }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted">Old kamera:</span>
+          <strong>{{ item.front_camera }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted">Batareya:</span>
+          <strong>{{ item.battery }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted">Rang:</span>
+          <strong>{{ item.color }}</strong>
+        </div>
+      </div>
+      {% if item.description %}
+      <hr class="my-3" />
+      <p class="text-muted small mb-0">{{ item.description }}</p>
+      {% endif %}
+    </div>
+  </div>
 
+  <!-- RIGHT: PURCHASE -->
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+      <h4 class="fw-bold mb-4">📦 Xarid Ma'lumotlari</h4>
+
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Telefon</div>
+        <div class="fw-semibold fs-6">{{ purchase.phone }}</div>
       </div>
 
-    </div>
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Soni</div>
+        <span
+          class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill fs-6"
+        >
+          {{ purchase.quantity }} dona
+        </span>
+      </div>
 
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Olish narxi</div>
+        <span
+          class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill fs-6"
+        >
+          ${{ purchase.cost_price }}
+        </span>
+      </div>
+
+      <div class="mb-3 pb-3 border-bottom">
+        <div class="text-muted small mb-1">Olingan sana</div>
+        <div class="fw-semibold">
+          {{ purchase.created_at|date:"Y-m-d H:i" }}
+        </div>
+      </div>
+
+      <div>
+        <div class="text-muted small mb-1">Tavsif</div>
+        <p class="text-muted mb-0">
+          {{ purchase.description|default:"Tavsif yo'q" }}
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -1,78 +1,175 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block content %}
 
-<div class="w-100 d-flex justify-content-around gap-2 align-items-center mb-4">
-  <a href="{% url 'home' %}" class="btn btn-outline-secondary fs-5"> ← Orqaga </a>
-
-  <div class="d-flex gap-2 ">
-    <a href="{% url 'edit_phone' pk=item.pk %}" class="btn btn-warning">
-      ✏️ Edit
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+    <i class="bx bx-arrow-back me-1"></i>
+    <span class="d-none d-sm-inline">Orqaga</span>
+  </a>
+  <div class="d-flex gap-2 flex-shrink-0">
+    <a href="{% url 'edit_phone' pk=item.pk %}" class="btn btn-warning btn-sm">
+      <i class="bx bx-edit"></i>
+      <span class="d-none d-sm-inline ms-1">Tahrirlash</span>
     </a>
-    <form
-      action="{% url 'delete_phone' pk=item.pk %}"
-      method="POST"
-      onsubmit="return confirm('O‘chirasizmi?');"
-    >
+    <form action="{% url 'delete_phone' pk=item.pk %}" method="POST"
+          onsubmit="return confirm('O\'chirasizmi?');">
       {% csrf_token %}
-      <button type="submit" class="btn btn-danger">🗑 Delete</button>
+      <button type="submit" class="btn btn-danger btn-sm">
+        <i class="bx bx-trash"></i>
+        <span class="d-none d-sm-inline ms-1">O'chirish</span>
+      </button>
     </form>
   </div>
 </div>
 
-<div class="container py-3">
-  <div class="row g-4">
-    <!-- IMAGE -->
-    <div class="col-lg-5">
-      <div
-        class="d-flex justify-content-center align-items-center bg-light rounded"
-        style="height: 400px"
-        data-bs-toggle="modal"
-        data-bs-target="#imgModal"
-      >
-        <img
-          src="{{ item.picture.url }}"
-          class="img-fluid"
-          style="max-height: 380px; object-fit: contain; cursor: pointer"
-        />
+<!-- MAIN GRID -->
+<div class="row g-4">
+
+  <!-- IMAGE COLUMN -->
+  <div class="col-12 col-lg-5">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100"
+         data-bs-toggle="modal" data-bs-target="#imgModal" style="cursor:pointer;">
+      <div class="d-flex justify-content-center align-items-center bg-light p-4"
+           style="min-height:300px;">
+        {% if item.picture %}
+          <img src="{{ item.picture.url }}" class="img-fluid"
+               style="max-height:280px; object-fit:contain;" />
+        {% else %}
+          <div class="text-muted text-center">
+            <i class="bx bx-mobile-alt d-block mb-2" style="font-size:4rem;"></i>
+            <span class="small">Rasm yo'q</span>
+          </div>
+        {% endif %}
       </div>
-    </div>
-
-    <!-- MODAL -->
-    <div class="modal fade" id="imgModal">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 bg-transparent">
-          <img src="{{ item.picture.url }}" class="img-fluid rounded" />
-        </div>
-      </div>
-    </div>
-
-    <!-- INFO -->
-    <div class="col-lg-7">
-      <div class="card shadow-sm border-0 p-4 h-100">
-        <h2 class="fw-bold mb-2">{{ item.name }}</h2>
-        <h3 class="text-primary mb-3">${{ item.price }}</h3>
-
-        <div class="row small g-2">
-          <div class="col-6"><b>Brand:</b> {{ item.brand }}</div>
-          <div class="col-6"><b>Year:</b> {{ item.release_year  }}</div>
-          <div class="col-6"><b>Display:</b> {{ item.display_size }}</div>
-          <div class="col-6"><b>CPU:</b> {{ item.cpu }}</div>
-          <div class="col-6"><b>RAM:</b> {{ item.ram }}</div>
-          <div class="col-6"><b>Memory:</b> {{ item.memory }}</div>
-          <div class="col-6"><b>Rear:</b> {{ item.rear_camera }}</div>
-          <div class="col-6"><b>Front:</b> {{ item.front_camera }}</div>
-          <div class="col-6"><b>Battery:</b> {{ item.battery }}</div>
-          <div class="col-6"><b>Weight:</b> {{ item.weight }}</div>
-          <div class="col-6"><b>Color:</b> {{ item.color }}</div>
-          <div class="col-6"><b>Material:</b> {{ item.material }}</div>
-        </div>
-
-        <hr />
-
-        <p class="text-muted">{{ item.description }}</p>
+      <div class="p-2 text-center bg-white border-top" style="font-size:0.75rem; color:#aaa;">
+        <i class="bx bx-zoom-in me-1"></i> Kattalashtirish uchun bosing
       </div>
     </div>
   </div>
+
+  <!-- IMAGE MODAL -->
+  {% if item.picture %}
+  <div class="modal fade" id="imgModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 bg-transparent shadow-none">
+        <img src="{{ item.picture.url }}" class="img-fluid rounded-4" />
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- INFO COLUMN -->
+  <div class="col-12 col-lg-7">
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+
+      <!-- Name + Price + Stock -->
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+          <h2 class="fw-bold mb-1 fs-4">{{ item.name }}</h2>
+          <h3 class="text-primary fw-bold mb-0 fs-3">${{ item.price }}</h3>
+        </div>
+        {% if item.quantity == 0 %}
+          <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill align-self-center">
+            <i class="bx bx-x-circle me-1"></i> Tugadi
+          </span>
+        {% else %}
+          <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill align-self-center">
+            <i class="bx bx-check-circle me-1"></i> {{ item.quantity }} dona
+          </span>
+        {% endif %}
+      </div>
+
+      <hr class="my-3">
+
+      <!-- SPECS GRID -->
+      <div class="row g-2">
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Brand</div>
+            <div class="fw-semibold small">{{ item.brand }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Yil</div>
+            <div class="fw-semibold small">{{ item.release_year }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Ekran</div>
+            <div class="fw-semibold small">{{ item.display_size }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">CPU</div>
+            <div class="fw-semibold small">{{ item.cpu }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">RAM</div>
+            <div class="fw-semibold small">{{ item.ram }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Xotira</div>
+            <div class="fw-semibold small">{{ item.memory }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Orqa kamera</div>
+            <div class="fw-semibold small">{{ item.rear_camera }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Old kamera</div>
+            <div class="fw-semibold small">{{ item.front_camera }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Batareya</div>
+            <div class="fw-semibold small">{{ item.battery }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Og'irlik</div>
+            <div class="fw-semibold small">{{ item.weight }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Rang</div>
+            <div class="fw-semibold small">{{ item.color }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4">
+          <div class="p-2 bg-light rounded-3 text-center h-100">
+            <div class="text-muted" style="font-size:0.72rem;">Material</div>
+            <div class="fw-semibold small">{{ item.material }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      {% if item.description %}
+      <hr class="my-3">
+      <div>
+        <div class="text-muted small mb-1"><i class="bx bx-note me-1"></i>Tavsif</div>
+        <p class="text-muted mb-0 small">{{ item.description }}</p>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
 </div>
 
 {% endblock %}

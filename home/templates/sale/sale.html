@@ -1,110 +1,131 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="container-fluid py-4 ">
-
-    <div class="card shadow-sm border-0">
-        <!-- HEADER -->
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">📦 Sotuv bo‘limi</h5>
-            <a href="{% url 'add_sale_view' %}" class="btn btn-info">
-                + Sotuv qo'shish</a>
-        </div>
-
-        <!-- TABLE -->
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Telefon</th>
-                        <th>Sotildi</th>
-                        <th>Mavjud</th>
-                        <th>Sotilgan narxi</th>
-                        <th>To'lov usuli</th>
-                        <th>Sotilgan sana</th>
-                        <th>Izoh</th>
-                        <th class="text-end">Amallar</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for sale in sales %}
-
-                    <tr class="clickable-row" style="cursor:pointer" data-url="{% url 'open_sale_details_view' pk=sale.pk %}">
-                        <td>
-                            <i class="fa-solid fa-mobile-screen-button me-2 text-secondary"></i>
-                            <strong>{{ sale.phone }}</strong>
-                        </td>
-
-                        <td>
-                            <span class="badge bg-primary px-3 py-2">
-                                {{ sale.quantity }}
-                            </span>
-                        </td>
-                        <td>
-                            {% if sale.phone.quantity == 0 %}
-                            <span class="badge bg-danger px-3 py-2">
-                                Tugadi
-                            </span>
-                            {% else %}
-                            <span class="badge bg-success px-3 py-2">
-                                {{ sale.phone.quantity }}
-                            </span>
-                            {% endif %}
-
-                        </td>
-                        <td>
-                            <span class="fw-semibold text-success">
-                                {{ sale.price_sold }} $
-                            </span>
-                        </td>
-                        <td>
-                            <span class="fw-semibold text-primary">
-                                {{ sale.payment_method }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="text-muted small">
-                                {{ sale.created_at|date:"Y-m-d H:i" }}
-                            </span>
-                        </td>
-
-                        <td>{{ sale.description|truncatewords:5 }}</td>
-
-                        <td class="text-end">
-                            <ul style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  list-style: none;
-                  gap: 10px;
-                  align-items: center;
-                  justify-content: center;
-                ">
-                                <li>
-                                    <a class="btn btn-warning " title="delete"
-                                        href="{% url 'edit_sale_view' pk=sale.pk %}"><i
-                                            class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
-                                </li>
-                                <li>
-                                    <a class="btn btn-danger text-danger" title="delete"
-                                        onclick="return confirm('Ochirasizmi');"
-                                        href="{% url 'delete_sale_view' pk=sale.pk %}"><i class="fa-solid fa-trash"
-                                            style="color: rgb(255, 255, 255)"></i></a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0 fw-bold">💰 Sotuvlar</h5>
+  <a href="{% url 'add_sale_view' %}" class="btn btn-primary btn-sm rounded-pill px-3">
+    <i class="bx bx-plus me-1"></i> Qo'shish
+  </a>
 </div>
+
+<!-- ========================= DESKTOP TABLE ========================= -->
+<div class="card shadow-sm border-0 rounded-4 d-none d-md-block">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th class="ps-4">Telefon</th>
+          <th>Sotildi</th>
+          <th>Mavjud</th>
+          <th>Sotilgan narx</th>
+          <th>To'lov usuli</th>
+          <th>Sana</th>
+          <th class="text-end pe-4">Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr class="clickable-row" data-url="{% url 'open_sale_details_view' pk=sale.pk %}" style="cursor:pointer;">
+          <td class="ps-4">
+            <i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i>
+            <strong>{{ sale.phone }}</strong>
+          </td>
+          <td>
+            <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill">
+              {{ sale.quantity }} dona
+            </span>
+          </td>
+          <td>
+            {% if sale.phone.quantity == 0 %}
+            <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill">Tugadi</span>
+            {% else %}
+            <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">{{ sale.phone.quantity }} dona</span>
+            {% endif %}
+          </td>
+          <td><span class="fw-bold text-success">${{ sale.price_sold }}</span></td>
+          <td>
+            <span class="badge bg-info-subtle text-info border border-info rounded-pill px-3 py-2">
+              <i class="fa-solid fa-credit-card me-1"></i>{{ sale.payment_method }}
+            </span>
+          </td>
+          <td><span class="text-muted small">{{ sale.created_at|date:"Y-m-d" }}</span></td>
+          <td class="text-end pe-4" onclick="event.stopPropagation()">
+            <div class="d-flex gap-2 justify-content-end">
+              <a class="btn btn-sm btn-outline-warning rounded-pill" href="{% url 'edit_sale_view' pk=sale.pk %}" title="Tahrirlash">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <a class="btn btn-sm btn-outline-danger rounded-pill" href="{% url 'delete_sale_view' pk=sale.pk %}"
+                 onclick="return confirm('O\'chirasizmi?')" title="O'chirish">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">Sotuvlar mavjud emas.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ========================= MOBILE CARDS ========================= -->
+<div class="d-flex flex-column gap-3 d-md-none">
+  {% for sale in sales %}
+  <a href="{% url 'open_sale_details_view' pk=sale.pk %}" class="text-decoration-none text-dark">
+    <div class="card border-0 shadow-sm rounded-4 p-3">
+      <!-- Top row -->
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <h6 class="fw-bold mb-0">
+            <i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i>{{ sale.phone }}
+          </h6>
+          <small class="text-muted">{{ sale.created_at|date:"Y-m-d" }}</small>
+        </div>
+        <span class="fw-bold text-success fs-6">${{ sale.price_sold }}</span>
+      </div>
+
+      <!-- Badges row -->
+      <div class="d-flex gap-2 flex-wrap mb-2">
+        <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1 rounded-pill">
+          {{ sale.quantity }} dona sotildi
+        </span>
+        {% if sale.phone.quantity == 0 %}
+        <span class="badge bg-danger-subtle text-danger border border-danger px-2 py-1 rounded-pill">Tugadi</span>
+        {% else %}
+        <span class="badge bg-success-subtle text-success border border-success px-2 py-1 rounded-pill">{{ sale.phone.quantity }} qoldi</span>
+        {% endif %}
+        <span class="badge bg-info-subtle text-info border border-info px-2 py-1 rounded-pill">
+          <i class="fa-solid fa-credit-card me-1"></i>{{ sale.payment_method }}
+        </span>
+      </div>
+
+      <!-- Actions row -->
+      <div class="d-flex gap-2 justify-content-end">
+        <a class="btn btn-sm btn-outline-warning rounded-pill px-3" href="{% url 'edit_sale_view' pk=sale.pk %}">
+          <i class="fa-solid fa-pen-to-square me-1"></i> Tahrirlash
+        </a>
+        <a class="btn btn-sm btn-outline-danger rounded-pill px-3" href="{% url 'delete_sale_view' pk=sale.pk %}"
+           onclick="return confirm('O\'chirasizmi?')">
+          <i class="fa-solid fa-trash me-1"></i> O'chirish
+        </a>
+      </div>
+    </div>
+  </a>
+  {% empty %}
+  <div class="text-center py-5">
+    <i class="bx bx-receipt fs-1 text-muted d-block mb-2"></i>
+    <p class="text-muted mb-0">Sotuvlar mavjud emas.</p>
+  </div>
+  {% endfor %}
+</div>
+
 <script>
-    document.querySelectorAll(".clickable-row").forEach(row => {
-        row.addEventListener("click", () => {
-            window.location.href = row.dataset.url;
-        });
-    });
+  document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => { window.location.href = row.dataset.url; });
+  });
 </script>
+
 {% endblock content %}

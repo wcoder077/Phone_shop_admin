@@ -6,18 +6,30 @@ from django.contrib.auth.decorators import login_not_required, login_required
 
 # references
 from .models import Stuff, Phone, Purchase, Sale
-from .forms import StuffForm, PhoneForm, PurchaseForm, SaleForm,Reference
+from .forms import StuffForm, PhoneForm, PurchaseForm, SaleForm, Reference
+
 
 # Home start
 @login_required(login_url="login_view")
-def home(request):
-    items = Phone.objects.filter(is_deleted=False).order_by("-created_at")
-    return render(request, "home/index.html", {"items": items})
+def home(request, brand=None):
+    items = Phone.objects.filter(is_deleted=False)
+    
+    # filter
+    if brand:
+        items = items.filter(brand__value=brand)
+    items = items.order_by("-created_at")
+    # unique brandlar
+    brands = Phone.objects.values_list("brand__value", flat=True).distinct().order_by("brand__value")
+    
+    context = {"items": items, "brands": brands, "current_brand": brand}
+    return render(request, "home/index.html", context)
+
 
 @login_required(login_url="login_view")
 def open_phone_details(request, pk):
     item = Phone.objects.get(pk=pk)
     return render(request, "home/open_phone_details.html", {"item": item})
+
 
 @login_required(login_url="login_view")
 def add_phone(request):
@@ -30,6 +42,7 @@ def add_phone(request):
         form = PhoneForm()
 
     return render(request, "home/add_phone.html", {"form": form})
+
 
 @login_required(login_url="login_view")
 def edit_phone(request, pk):
@@ -62,24 +75,21 @@ def purchase_view(request):
     purchases = Purchase.objects.filter(is_deleted=False).order_by("-created_at")
     return render(request, "purchase/purchase.html", {"purchases": purchases})
 
+
 @login_required(login_url="login_view")
 def add_purchase_view(request):
     if request.method == "POST":
         form = PurchaseForm(request.POST)
 
         if form.is_valid():
-            purchase = form.save()
-
-            phone = purchase.phone
-            phone.quantity += purchase.quantity
-            phone.save()
-
+            form.save()  # model save() o'zi phone.quantity += quantity qiladi
             return redirect("purchase_view")
 
     else:
         form = PurchaseForm()
 
     return render(request, "purchase/add_purchase.html", {"form": form})
+
 
 @login_required(login_url="login_view")
 def edit_purchase_view(request, pk):
@@ -101,6 +111,7 @@ def delete_purchase_view(request, pk):
     purchase.is_deleted = True
     purchase.save()
     return redirect("purchase_view")
+
 
 @login_required(login_url="login_view")
 def open_purchase_details_view(request, pk):
@@ -124,6 +135,7 @@ def sale_view(request):
     }
     return render(request, "sale/sale.html", context)
 
+
 @login_required(login_url="login_view")
 def add_sale_view(request):
     if request.method == "POST":
@@ -134,10 +146,7 @@ def add_sale_view(request):
             phone = sale.phone
 
             if phone.quantity >= sale.quantity:
-                Phone.objects.filter(pk=phone.pk).update(
-                    quantity=F("quantity") - sale.quantity
-                )
-
+                # model save() o'zi phone.quantity -= quantity qiladi (yangi obyekt)
                 sale.save()
                 return redirect("sale_view")
             else:
@@ -150,6 +159,7 @@ def add_sale_view(request):
 
     return render(request, "sale/add_sale.html", {"form": form})
 
+
 @login_required(login_url="login_view")
 def open_sale_details_view(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
@@ -160,6 +170,7 @@ def open_sale_details_view(request, pk):
         "sale": sale,
     }
     return render(request, "sale/open_sale_details.html", context)
+
 
 @login_required(login_url="login_view")
 def edit_sale_view(request, pk):
@@ -190,6 +201,7 @@ def stuff_view(request):
     context = {"stuffs": stuffs}
     return render(request, "stuff/stuff.html", context)
 
+
 @login_required(login_url="login_view")
 def add_stuff_view(request):
     if request.method == "POST":
@@ -203,6 +215,7 @@ def add_stuff_view(request):
         form = StuffForm()
 
     return render(request, "stuff/add_stuff.html", {"form": form})
+
 
 @login_required(login_url="login_view")
 def edit_stuff_view(request, pk):
@@ -224,6 +237,7 @@ def delete_stuff_view(request, pk):
     stuff.is_deleted = True
     stuff.save()
     return redirect("stuff_view")
+
 
 @login_required(login_url="login_view")
 def open_stuff_details_view(request, pk):
@@ -247,51 +261,55 @@ def search_view(request):
     if query:
 
         stuffs = Stuff.objects.filter(
-            Q(full_name__icontains=query) |
-            Q(phone__icontains=query) |
-            Q(role__icontains=query)
+            Q(full_name__icontains=query)
+            | Q(phone__icontains=query)
+            | Q(role__icontains=query)
         )
 
         phones = Phone.objects.filter(
-            Q(name__icontains=query) |
-            Q(material__icontains=query) |
-            Q(rear_camera__icontains=query) |
-            Q(front_camera__icontains=query) |
-            Q(display_size__icontains=query) |
-            Q(resolution__icontains=query) |
-            Q(cpu__icontains=query) |
-            Q(price__icontains=query) |
-            Q(brand__value__icontains=query) |
-            Q(ram__value__icontains=query) |
-            Q(memory__value__icontains=query) |
-            Q(color__value__icontains=query)
+            Q(name__icontains=query)
+            | Q(material__icontains=query)
+            | Q(rear_camera__icontains=query)
+            | Q(front_camera__icontains=query)
+            | Q(display_size__icontains=query)
+            | Q(resolution__icontains=query)
+            | Q(cpu__icontains=query)
+            | Q(price__icontains=query)
+            | Q(brand__value__icontains=query)
+            | Q(ram__value__icontains=query)
+            | Q(memory__value__icontains=query)
+            | Q(color__value__icontains=query)
         ).distinct()
 
         sales = Sale.objects.filter(
-            Q(phone__name__icontains=query) |
-            Q(payment_method__icontains=query) |
-            Q(description__icontains=query)
+            Q(phone__name__icontains=query)
+            | Q(payment_method__icontains=query)
+            | Q(description__icontains=query)
         ).distinct()
 
         references = Reference.objects.filter(
-            Q(type__icontains=query) |
-            Q(value__icontains=query)
+            Q(type__icontains=query) | Q(value__icontains=query)
         )
 
-    return render(request, "search.html", {
-        "query": query,
-        "stuffs": stuffs,
-        "phones": phones,
-        "sales": sales,
-        "references": references,
-    })
+    return render(
+        request,
+        "search.html",
+        {
+            "query": query,
+            "stuffs": stuffs,
+            "phones": phones,
+            "sales": sales,
+            "references": references,
+        },
+    )
+
+
 @login_required(login_url="login_view")
 def live_search(request):
     query = request.GET.get("q", "")
 
     phones = Phone.objects.filter(
-        Q(name__icontains=query) |
-        Q(brand__value__icontains=query)
+        Q(name__icontains=query) | Q(brand__value__icontains=query)
     )[:10]
 
     data = [
@@ -299,7 +317,7 @@ def live_search(request):
             "id": p.id,
             "name": p.name,
             "price": str(p.price),
-            "image": p.picture.url if p.picture else ""
+            "image": p.picture.url if p.picture else "",
         }
         for p in phones
     ]

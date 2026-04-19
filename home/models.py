@@ -95,10 +95,12 @@ class Purchase(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        is_new = self.pk is None
         super().save(*args, **kwargs)
-
-        self.phone.quantity += self.quantity
-        self.phone.save()
+        # Faqat yangi xarid yaratilganda miqdor qo'shiladi
+        if is_new:
+            self.phone.quantity += self.quantity
+            self.phone.save()
 
     def __str__(self):
         return f"Purchase: {self.phone.name} ({self.created_at.date()})"
@@ -124,10 +126,12 @@ class Sale(models.Model):
         return f"{self.phone.name} - {self.quantity}pcs"
 
     def save(self, *args, **kwargs):
+        is_new = self.pk is None
         super().save(*args, **kwargs)
-
-        self.phone.quantity -= self.quantity
-        self.phone.save()
+        # Faqat yangi sotuv yaratilganda miqdor ayiriladi
+        if is_new:
+            self.phone.quantity -= self.quantity
+            self.phone.save()
 
     @property
     def total_amount(self):

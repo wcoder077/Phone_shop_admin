@@ -1,92 +1,111 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="container-fluid py-4 ">
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0 fw-bold">📦 Xaridlar</h5>
+  <a href="{% url 'add_purchase_view' %}" class="btn btn-primary btn-sm rounded-pill px-3">
+    <i class="bx bx-plus me-1"></i> Qo'shish
+  </a>
+</div>
 
-  <div class="card shadow-sm border-0">
-    <!-- HEADER -->
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">📦 Xarid bo'limi</h5>
-      <a href="{% url 'add_purchase_view' %}" class="btn btn-info">
-        + Xarid qo'shish</a>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>Telefon</th>
-            <th>Soni</th>
-            <th>Olish narxi</th>
-            <th>Olingan vaqti</th>
-            <th>Izoh</th>
-            <th class="text-end">Amallar</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {% for purchase in purchases %}
-
-          <tr class="clickable-row" data-url="{% url 'open_purchase_details_view' pk=purchase.pk %}"
-            style="cursor:pointer">
-            <td>
-              <i class="fa-solid fa-mobile-screen-button me-2 text-secondary"></i>
-              <strong>{{ purchase.phone }}</strong>
-            </td>
-
-            <td>
-              <span class="badge bg-primary px-3 py-2">
-                {{ purchase.quantity }}
-              </span>
-            </td>
-
-            <td>
-              <span class="fw-semibold text-success">
-                {{ purchase.cost_price }} $
-              </span>
-            </td>
-
-            <td>
-              <span class="text-muted small">
-                {{ purchase.created_at|date:"Y-m-d H:i" }}
-              </span>
-            </td>
-
-            <td>{{ purchase.description|truncatewords:5 }}</td>
-
-            <td class="text-end">
-              <ul style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  list-style: none;
-                  gap: 10px;
-                  align-items: center;
-                  justify-content: center;
-                ">
-                <li>
-                  <a class="btn btn-warning " title="delete"
-                    href="{% url 'edit_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255)"></i></a>
-                </li>
-                <li>
-                  <a class="btn btn-danger text-danger" title="delete" onclick="return confirm('Ochirasizmi');"
-                    href="{% url 'delete_purchase_view' pk=purchase.pk %}"><i class="fa-solid fa-trash"
-                      style="color: rgb(255, 255, 255)"></i></a>
-                </li>
-              </ul>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+<!-- ========================= DESKTOP TABLE (md va undan katta) ========================= -->
+<div class="card shadow-sm border-0 rounded-4 d-none d-md-block">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th class="ps-4">Telefon</th>
+          <th>Soni</th>
+          <th>Narxi</th>
+          <th>Sana</th>
+          <th>Izoh</th>
+          <th class="text-end pe-4">Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for purchase in purchases %}
+        <tr class="clickable-row" data-url="{% url 'open_purchase_details_view' pk=purchase.pk %}" style="cursor:pointer;">
+          <td class="ps-4">
+            <i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i>
+            <strong>{{ purchase.phone }}</strong>
+          </td>
+          <td>
+            <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill">
+              {{ purchase.quantity }} dona
+            </span>
+          </td>
+          <td><span class="fw-bold text-success">${{ purchase.cost_price }}</span></td>
+          <td><span class="text-muted small">{{ purchase.created_at|date:"Y-m-d" }}</span></td>
+          <td><span class="text-muted">{{ purchase.description|truncatewords:4|default:"-" }}</span></td>
+          <td class="text-end pe-4" onclick="event.stopPropagation()">
+            <div class="d-flex gap-2 justify-content-end">
+              <a class="btn btn-sm btn-outline-warning rounded-pill" href="{% url 'edit_purchase_view' pk=purchase.pk %}" title="Tahrirlash">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <a class="btn btn-sm btn-outline-danger rounded-pill" href="{% url 'delete_purchase_view' pk=purchase.pk %}"
+                 onclick="return confirm('O\'chirasizmi?')" title="O'chirish">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">Xaridlar mavjud emas.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+
+<!-- ========================= MOBILE CARDS (faqat sm va undan kichik) ========================= -->
+<div class="d-flex flex-column gap-3 d-md-none">
+  {% for purchase in purchases %}
+  <a href="{% url 'open_purchase_details_view' pk=purchase.pk %}" class="text-decoration-none text-dark">
+    <div class="card border-0 shadow-sm rounded-4 p-3">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <h6 class="fw-bold mb-0">
+            <i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i>{{ purchase.phone }}
+          </h6>
+          <small class="text-muted">{{ purchase.created_at|date:"Y-m-d" }}</small>
+        </div>
+        <span class="fw-bold text-success fs-6">${{ purchase.cost_price }}</span>
+      </div>
+
+      <div class="d-flex gap-2 align-items-center mb-2 flex-wrap">
+        <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1 rounded-pill">
+          {{ purchase.quantity }} dona
+        </span>
+        {% if purchase.description %}
+        <span class="text-muted small">{{ purchase.description|truncatewords:6 }}</span>
+        {% endif %}
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end" onclick="event.stopPropagation()">
+        <a class="btn btn-sm btn-outline-warning rounded-pill px-3" href="{% url 'edit_purchase_view' pk=purchase.pk %}">
+          <i class="fa-solid fa-pen-to-square me-1"></i> Tahrirlash
+        </a>
+        <a class="btn btn-sm btn-outline-danger rounded-pill px-3" href="{% url 'delete_purchase_view' pk=purchase.pk %}"
+           onclick="return confirm('O\'chirasizmi?')">
+          <i class="fa-solid fa-trash me-1"></i> O'chirish
+        </a>
+      </div>
+    </div>
+  </a>
+  {% empty %}
+  <div class="text-center py-5">
+    <i class="bx bx-package fs-1 text-muted d-block mb-2"></i>
+    <p class="text-muted mb-0">Xaridlar mavjud emas.</p>
+  </div>
+  {% endfor %}
+</div>
+
 <script>
   document.querySelectorAll(".clickable-row").forEach(row => {
-    row.addEventListener("click", () => {
-      window.location.href = row.dataset.url;
-    });
+    row.addEventListener("click", () => { window.location.href = row.dataset.url; });
   });
 </script>
+
 {% endblock content %}
